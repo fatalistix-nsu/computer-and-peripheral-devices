@@ -1,0 +1,96 @@
+1 - IMAGES
+	1) Mat - object
+	
+	2) imread
+	
+	3) imshow
+	
+	4) waitKey
+	0 - infinity
+	
+	5) VideoCapture
+	
+	6) VideoCaptureObject.read()
+	
+2 - BASIC FUNCTIONS
+	1) cvtColor()
+	
+	2) GaussianBlur()
+	
+	3) Size - object
+	
+	4) Canny()
+	
+	5) dilate()
+	
+	6) getStructuringElement()
+
+	7) erode()
+	
+3 - RESIZE AND CROP
+	1) resize()
+	
+	2) Rect - object
+	
+	3) Mat(Rect) === Crop
+	
+4 - DRAW SHAPES AND TEXT
+
+	1) Scalar - object
+	
+	2) circle()
+	
+	3) rectangle()
+	
+	4) line()
+	
+	5) putText
+
+5 - WARP:
+	1) Point2f - floating point - object
+	Point2f src[4] = {{529.5, 142}, {771, 190.0}, {405, 395}, {674., 457.}};
+
+	2) getPerspectiveTransform(floating points, floating points, solveMethod)
+	Calc a perspective transform from four pairs of the corresponding points
+	
+	3) WarpPerspective(srcMat, destMat,transformMat, sizeOfOutputImage)
+	Applies a perspective transformation to an image
+	transforms the source image using the specified matrix
+	
+6 - COLOR DETECTION:
+	1) void inRange(img, lower, upper, dst)
+	Checks if array elements lie btwn the elements of two other arrays.
+	white on image - true
+	black on image - false
+	
+	2) void namedWindow(winname, (size_x, size_y))
+	creates a window. if window with that name exist, does nothing
+	can be used as a placeholder for images and trackbars
+	
+	2.1) destroyWindow
+	2.2) destroyAllWindows
+	
+	3) int createTrackbar()
+	
+7 - SHAPES/CONTUR DETECTION
+	1) findContours()
+	Second argument - vector<vector<Point>> contours
+	Third  argument - vector<Vec4i>
+	
+	2) drawContours()
+	SecondArgument - vector<vector<Point>> contours
+	
+	3) contourArea()
+	argument - countour
+	
+	4) arcLength()
+	
+	5) approxPolyDP()
+	
+	6) boundingRect()
+	
+8 - FACES DETECT
+
+	1) CascadeClassifier - object
+	
+	2) detectMultiScale()
