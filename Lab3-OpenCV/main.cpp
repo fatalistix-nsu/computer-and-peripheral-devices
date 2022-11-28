@@ -7,8 +7,8 @@ using namespace cv;
 
 int main()
 {
-    //string path = "/home/vyacheslav/Документы/Programming/EVMnPU/Lab3-OpenCV/Images and Videos/VID_20221101_223911.mp4";
-    VideoCapture cap(0);
+    string path = "/home/vyacheslav/Documents/Programming/EVMnPU/Lab3-OpenCV/Images and Videos/VID_20221101_223911.mp4";
+    VideoCapture cap(path);
     Mat src;
     Mat resized;
     Mat flipped;
@@ -88,7 +88,7 @@ int main()
 
         gettimeofday(&outputTime, nullptr);
 
-        if (waitKey(10) >= 0)
+        if (waitKey(1) >= 0)
         {
             break;
         }
