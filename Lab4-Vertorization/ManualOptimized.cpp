@@ -5,7 +5,7 @@
 
 using namespace std;
 
-static int MATRIX_SIZE = 2048;
+static int MATRIX_SIZE = 1024;
 static int NUM_OF_ITERATIONS = 10;
 static int MAX_MATRIX_VALUE = 10;
 

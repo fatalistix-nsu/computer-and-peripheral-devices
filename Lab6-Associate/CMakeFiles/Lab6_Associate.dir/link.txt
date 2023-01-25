@@ -1,0 +1,1 @@
+/usr/bin/c++ -fsanitize=address CMakeFiles/Lab6_Associate.dir/main.cpp.o -o Lab6_Associate 
