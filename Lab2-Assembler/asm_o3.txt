@@ -1,0 +1,241 @@
+power(long double, unsigned long):
+        fldt    8(%rsp)
+        testq   %rdi, %rdi
+        je      .L11
+        fld1
+        movl    $1, %eax
+.L10:
+        addq    $1, %rax
+        fmul    %st(1), %st
+        cmpq    %rax, %rdi
+        jnb     .L10
+        fstp    %st(1)
+        ret
+.L11:
+        fstp    %st(0)
+        fld1
+        ret
+factorial(unsigned long):
+        testq   %rdi, %rdi
+        je      .L17
+        movl    $1, %eax
+        fld1
+.L16:
+        movq    %rax, -16(%rsp)
+        fildq   -16(%rsp)
+        testq   %rax, %rax
+        jns     .L15
+        fadds   .LC2(%rip)
+.L15:
+        fmulp   %st, %st(1)
+        addq    $1, %rax
+        cmpq    %rax, %rdi
+        jnb     .L16
+        ret
+.L17:
+        fld1
+        ret
+Sin(long double, unsigned long):
+        pushq   %r12
+        movl    $1, %eax
+        pushq   %rbp
+        movq    %rdi, %rbp
+        pushq   %rbx
+        movl    $-1, %ebx
+        subq    $16, %rsp
+        fldt    48(%rsp)
+        fldz
+        fcomip  %st(1), %st
+        fldl    .LC4(%rip)
+        cmovbe  %eax, %ebx
+        seta    %r12b
+        fstpt   (%rsp)
+        movq    (%rsp), %rax
+        movl    8(%rsp), %edx
+        pushq   %rdx
+        pushq   %rax
+        fabs
+        subq    $16, %rsp
+        fstpt   (%rsp)
+        call    fmodl
+        addq    $32, %rsp
+        fldl    .LC5(%rip)
+        fxch    %st(1)
+        fcomi   %st(1), %st
+        jbe     .L48
+        movzbl  %r12b, %r12d
+        fsubp   %st, %st(1)
+        leal    -1(%r12,%r12), %r12d
+        movl    %r12d, %ebx
+        jmp     .L22
+.L48:
+        fstp    %st(1)
+.L22:
+        fldl    .LC6(%rip)
+        fxch    %st(1)
+        fcomi   %st(1), %st
+        fstp    %st(1)
+        jbe     .L24
+        fsubrl  .LC5(%rip)
+.L24:
+        testq   %rbp, %rbp
+        je      .L36
+        fldz
+        xorl    %edx, %edx
+        movl    $1, %ecx
+        flds    .LC2(%rip)
+        testq   %rdx, %rdx
+        je      .L37
+.L47:
+        movl    $1, %eax
+        fld1
+.L28:
+        fchs
+        addq    $1, %rax
+        cmpq    %rax, %rdx
+        jnb     .L28
+        movl    $1, %eax
+        fld1
+.L29:
+        addq    $1, %rax
+        fmul    %st(4), %st
+        cmpq    %rax, %rcx
+        jnb     .L29
+        movq    %rcx, %rsi
+.L27:
+        fmulp   %st, %st(1)
+        movl    $1, %eax
+        fld1
+.L31:
+        movq    %rax, (%rsp)
+        fildq   (%rsp)
+        testq   %rax, %rax
+        jns     .L30
+        fadd    %st(3), %st
+.L30:
+        addq    $1, %rax
+        fmulp   %st, %st(1)
+        cmpq    %rax, %rsi
+        jnb     .L31
+        fdivrp  %st, %st(1)
+        fucomi  %st(0), %st
+        jp      .L46
+        faddp   %st, %st(2)
+.L33:
+        leaq    1(%rdx), %rax
+        addq    $2, %rdx
+        addq    $2, %rcx
+        cmpq    %rdx, %rbp
+        jb      .L49
+        movq    %rax, %rdx
+        testq   %rdx, %rdx
+        jne     .L47
+.L37:
+        fld     %st(2)
+        movl    $1, %esi
+        fld1
+        fxch    %st(1)
+        jmp     .L27
+.L36:
+        fstp    %st(0)
+        fldz
+        jmp     .L26
+.L49:
+        fstp    %st(0)
+        fstp    %st(1)
+.L26:
+        movl    %ebx, (%rsp)
+        fildl   (%rsp)
+        addq    $16, %rsp
+        popq    %rbx
+        popq    %rbp
+        popq    %r12
+        fmulp   %st, %st(1)
+        ret
+.L46:
+        fstp    %st(0)
+        fldz
+        faddp   %st, %st(2)
+        jmp     .L33
+.LC8:
+        .string "Answer: "
+.LC10:
+        .string "Time: "
+.LC12:
+        .string "s"
+main:
+        pushq   %rbx
+        movl    $10, %edx
+        subq    $16, %rsp
+        movq    8(%rsi), %rdi
+        xorl    %esi, %esi
+        call    strtoll
+        movl    $.LC8, %esi
+        movl    $8, %edx
+        movl    $_ZSt4cout, %edi
+        movq    %rax, %rbx
+        call    std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, long)
+        flds    .LC9(%rip)
+        movq    %rbx, %rdi
+        fstpt   (%rsp)
+        movq    (%rsp), %rax
+        movl    8(%rsp), %edx
+        pushq   %rdx
+        pushq   %rax
+        call    Sin(long double, unsigned long)
+        movl    $_ZSt4cout, %edi
+        fstpt   (%rsp)
+        call    std::basic_ostream<char, std::char_traits<char> >& std::basic_ostream<char, std::char_traits<char> >::_M_insert<long double>(long double)
+        movq    %rax, %rdi
+        popq    %rax
+        popq    %rdx
+        call    std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&) [clone .isra.0]
+        movl    $6, %edx
+        movl    $.LC10, %esi
+        movl    $_ZSt4cout, %edi
+        call    std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, long)
+        call    clock
+        subq    $16, %rsp
+        movl    $_ZSt4cout, %edi
+        movq    %rax, 16(%rsp)
+        fildq   16(%rsp)
+        fdivs   .LC11(%rip)
+        fstpt   (%rsp)
+        call    std::basic_ostream<char, std::char_traits<char> >& std::basic_ostream<char, std::char_traits<char> >::_M_insert<long double>(long double)
+        popq    %rcx
+        movl    $1, %edx
+        popq    %rsi
+        movq    %rax, %rbx
+        movl    $.LC12, %esi
+        movq    %rax, %rdi
+        call    std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, long)
+        movq    %rbx, %rdi
+        call    std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&) [clone .isra.0]
+        addq    $16, %rsp
+        xorl    %eax, %eax
+        popq    %rbx
+        ret
+_GLOBAL__sub_I_power(long double, unsigned long):
+        subq    $8, %rsp
+        movl    $_ZStL8__ioinit, %edi
+        call    std::ios_base::Init::Init() [complete object constructor]
+        movl    $__dso_handle, %edx
+        movl    $_ZStL8__ioinit, %esi
+        movl    $_ZNSt8ios_base4InitD1Ev, %edi
+        addq    $8, %rsp
+        jmp     __cxa_atexit
+.LC2:
+        .long   1602224128
+.LC4:
+        .long   1413754136
+        .long   1075388923
+.LC5:
+        .long   1413754136
+        .long   1074340347
+.LC6:
+        .long   1413754136
+        .long   1073291771
+.LC9:
+        .long   1092616192
+.LC11:
+        .long   1232348160

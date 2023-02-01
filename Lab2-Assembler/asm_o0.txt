@@ -1,0 +1,275 @@
+power(long double, unsigned long):
+        pushq   %rbp
+        movq    %rsp, %rbp
+        movq    %rdi, -40(%rbp)
+        fld1
+        fstpt   -16(%rbp)
+        movq    $1, -24(%rbp)
+        jmp     .L8
+.L9:
+        fldt    -16(%rbp)
+        fldt    16(%rbp)
+        fmulp   %st, %st(1)
+        fstpt   -16(%rbp)
+        addq    $1, -24(%rbp)
+.L8:
+        movq    -24(%rbp), %rax
+        cmpq    %rax, -40(%rbp)
+        jnb     .L9
+        fldt    -16(%rbp)
+        popq    %rbp
+        ret
+factorial(unsigned long):
+        pushq   %rbp
+        movq    %rsp, %rbp
+        movq    %rdi, -40(%rbp)
+        fld1
+        fstpt   -16(%rbp)
+        movq    $1, -24(%rbp)
+        jmp     .L12
+.L14:
+        fildq   -24(%rbp)
+        cmpq    $0, -24(%rbp)
+        jns     .L13
+        fldt    .LC2(%rip)
+        faddp   %st, %st(1)
+.L13:
+        fldt    -16(%rbp)
+        fmulp   %st, %st(1)
+        fstpt   -16(%rbp)
+        addq    $1, -24(%rbp)
+.L12:
+        movq    -24(%rbp), %rax
+        cmpq    %rax, -40(%rbp)
+        jnb     .L14
+        fldt    -16(%rbp)
+        popq    %rbp
+        ret
+Sin(long double, unsigned long):
+        pushq   %rbp
+        movq    %rsp, %rbp
+        subq    $96, %rsp
+        movq    %rdi, -72(%rbp)
+        fldt    16(%rbp)
+        fldz
+        fcomip  %st(1), %st
+        fstp    %st(0)
+        jbe     .L32
+        movl    $-1, %eax
+        jmp     .L19
+.L32:
+        movl    $1, %eax
+.L19:
+        movl    %eax, -4(%rbp)
+        pushq   24(%rbp)
+        pushq   16(%rbp)
+        call    std::fabs(long double)
+        addq    $16, %rsp
+        movq    .LC4(%rip), %rax
+        leaq    -16(%rsp), %rsp
+        fstpt   (%rsp)
+        movq    %rax, %xmm0
+        call    __gnu_cxx::__promote_2<decltype (((__gnu_cxx::__promote_2<long double, std::__is_integer<long double>::__value>::__type)(0))+((__gnu_cxx::__promote_2<double, std::__is_integer<double>::__value>::__type)(0))), std::__is_integer<decltype (((__gnu_cxx::__promote_2<long double, std::__is_integer<long double>::__value>::__type)(0))+((__gnu_cxx::__promote_2<double, std::__is_integer<double>::__value>::__type)(0)))>::__value>::__type std::fmod<long double, double>(long double, double)
+        addq    $16, %rsp
+        fstpt   16(%rbp)
+        fldt    .LC5(%rip)
+        fldt    16(%rbp)
+        fcomip  %st(1), %st
+        fstp    %st(0)
+        jbe     .L20
+        fldt    16(%rbp)
+        fldt    .LC5(%rip)
+        fsubrp  %st, %st(1)
+        fstpt   16(%rbp)
+        negl    -4(%rbp)
+.L20:
+        fldt    .LC6(%rip)
+        fldt    16(%rbp)
+        fcomip  %st(1), %st
+        fstp    %st(0)
+        jbe     .L22
+        fldt    .LC5(%rip)
+        fldt    16(%rbp)
+        fsubrp  %st, %st(1)
+        fstpt   16(%rbp)
+.L22:
+        fldz
+        fstpt   -32(%rbp)
+        movq    $1, -40(%rbp)
+        jmp     .L24
+.L27:
+        movq    -40(%rbp), %rax
+        subq    $1, %rax
+        fld1
+        fchs
+        leaq    -16(%rsp), %rsp
+        fstpt   (%rsp)
+        movq    %rax, %rdi
+        call    power(long double, unsigned long)
+        addq    $16, %rsp
+        fstpt   -96(%rbp)
+        movq    -40(%rbp), %rax
+        addq    %rax, %rax
+        subq    $1, %rax
+        pushq   24(%rbp)
+        pushq   16(%rbp)
+        movq    %rax, %rdi
+        call    power(long double, unsigned long)
+        addq    $16, %rsp
+        fldt    -96(%rbp)
+        fmulp   %st, %st(1)
+        fstpt   -96(%rbp)
+        movq    -40(%rbp), %rax
+        addq    %rax, %rax
+        subq    $1, %rax
+        movq    %rax, %rdi
+        call    factorial(unsigned long)
+        fldt    -96(%rbp)
+        fdivp   %st, %st(1)
+        fstpt   -64(%rbp)
+        pushq   -56(%rbp)
+        pushq   -64(%rbp)
+        call    std::isnan(long double)
+        addq    $16, %rsp
+        testb   %al, %al
+        je      .L25
+        fldt    -32(%rbp)
+        fldz
+        faddp   %st, %st(1)
+        fstpt   -32(%rbp)
+        jmp     .L26
+.L25:
+        fldt    -32(%rbp)
+        fldt    -64(%rbp)
+        faddp   %st, %st(1)
+        fstpt   -32(%rbp)
+.L26:
+        addq    $1, -40(%rbp)
+.L24:
+        movq    -40(%rbp), %rax
+        cmpq    %rax, -72(%rbp)
+        jnb     .L27
+        fildl   -4(%rbp)
+        fldt    -32(%rbp)
+        fmulp   %st, %st(1)
+        leave
+        ret
+.LC9:
+        .string "Answer: "
+.LC10:
+        .string "Time: "
+.LC12:
+        .string "s"
+main:
+        pushq   %rbp
+        movq    %rsp, %rbp
+        pushq   %rbx
+        subq    $72, %rsp
+        movl    %edi, -52(%rbp)
+        movq    %rsi, -64(%rbp)
+        movq    -64(%rbp), %rax
+        addq    $8, %rax
+        movq    (%rax), %rax
+        movq    %rax, %rdi
+        call    atoll
+        movq    %rax, -24(%rbp)
+        fldt    .LC8(%rip)
+        fstpt   -48(%rbp)
+        movl    $.LC9, %esi
+        movl    $_ZSt4cout, %edi
+        call    std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)
+        movq    %rax, %rbx
+        movq    -24(%rbp), %rax
+        pushq   -40(%rbp)
+        pushq   -48(%rbp)
+        movq    %rax, %rdi
+        call    Sin(long double, unsigned long)
+        addq    $16, %rsp
+        leaq    -16(%rsp), %rsp
+        fstpt   (%rsp)
+        movq    %rbx, %rdi
+        call    std::basic_ostream<char, std::char_traits<char> >::operator<<(long double)
+        addq    $16, %rsp
+        movl    $_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_, %esi
+        movq    %rax, %rdi
+        call    std::basic_ostream<char, std::char_traits<char> >::operator<<(std::basic_ostream<char, std::char_traits<char> >& (*)(std::basic_ostream<char, std::char_traits<char> >&))
+        movl    $.LC10, %esi
+        movl    $_ZSt4cout, %edi
+        call    std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)
+        movq    %rax, %rbx
+        call    clock
+        movq    %rax, -72(%rbp)
+        fildq   -72(%rbp)
+        fldt    .LC11(%rip)
+        fdivrp  %st, %st(1)
+        leaq    -16(%rsp), %rsp
+        fstpt   (%rsp)
+        movq    %rbx, %rdi
+        call    std::basic_ostream<char, std::char_traits<char> >::operator<<(long double)
+        addq    $16, %rsp
+        movl    $.LC12, %esi
+        movq    %rax, %rdi
+        call    std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)
+        movl    $_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_, %esi
+        movq    %rax, %rdi
+        call    std::basic_ostream<char, std::char_traits<char> >::operator<<(std::basic_ostream<char, std::char_traits<char> >& (*)(std::basic_ostream<char, std::char_traits<char> >&))
+        movl    $0, %eax
+        movq    -8(%rbp), %rbx
+        leave
+        ret
+__static_initialization_and_destruction_0(int, int):
+        pushq   %rbp
+        movq    %rsp, %rbp
+        subq    $16, %rsp
+        movl    %edi, -4(%rbp)
+        movl    %esi, -8(%rbp)
+        cmpl    $1, -4(%rbp)
+        jne     .L39
+        cmpl    $65535, -8(%rbp)
+        jne     .L39
+        movl    $_ZStL8__ioinit, %edi
+        call    std::ios_base::Init::Init() [complete object constructor]
+        movl    $__dso_handle, %edx
+        movl    $_ZStL8__ioinit, %esi
+        movl    $_ZNSt8ios_base4InitD1Ev, %edi
+        call    __cxa_atexit
+.L39:
+        nop
+        leave
+        ret
+_GLOBAL__sub_I_power(long double, unsigned long):
+        pushq   %rbp
+        movq    %rsp, %rbp
+        movl    $65535, %esi
+        movl    $1, %edi
+        call    __static_initialization_and_destruction_0(int, int)
+        popq    %rbp
+        ret
+.LC2:
+        .long   0
+        .long   -2147483648
+        .long   16447
+        .long   0
+.LC4:
+        .long   1413754136
+        .long   1075388923
+.LC5:
+        .long   560513024
+        .long   -921707870
+        .long   16384
+        .long   0
+.LC6:
+        .long   560513024
+        .long   -921707870
+        .long   16383
+        .long   0
+.LC8:
+        .long   0
+        .long   -1610612736
+        .long   16386
+        .long   0
+.LC11:
+        .long   0
+        .long   -198967296
+        .long   16402
+        .long   0
